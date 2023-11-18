@@ -8,9 +8,10 @@ const PORT: number = readEnv('DB_PORT', 3306, true) as number
 const DB_USERNAME: string = readEnv('DB_USERNAME', 'root') as string
 const DB_PASSWORD: string = readEnv('DB_PASSWORD', '') as string
 const DB_DATABASE: string = readEnv('DB_DATABASE', 'test_ecommerce') as string
+const DB_DATABASE_TYPE: string = readEnv('DB_DATABASE_TYPE', 'mysql') as string
 
 export const AppDataSource = new DataSource({
-  type: 'mysql',
+  type: <'mysql' | 'postgres'>DB_DATABASE_TYPE, //One of both dbs may be used
   host: DB_HOSTNAME,
   port: PORT,
   username: DB_USERNAME,

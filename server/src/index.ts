@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 
 const HOSTNAME: string = readEnv('HOST', 'localhost') as string;
-const PORT: number = readEnv('PORT', 3000, true) as number;
+const PORT: number = readEnv('PORT', 5000, true) as number;
 
 const app = express();
 app.use(express.json());
