@@ -3,12 +3,13 @@ import * as z from 'zod';
 import jwt from 'jsonwebtoken'
 
 import logger from "../../services/logger";
+import * as Mojaloop from "../../services/mojaloop"
 import { AppDataSource } from "../../database/dataSource";
 import { UserEntity } from "../../entity/UserEntity";
 
 import { hashPassword } from "../../utils/utils";
 
-export const LoginFormSchema = z.object({
+export const RegisterFormSchema = z.object({
     email: z.string().email('Please enter a valid email'),
     password: z.string(),
     firstName: z.string(),
@@ -20,7 +21,7 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? '1d';
 
 export async function postUserRegister (req:Request, res: Response) {
     try {
-        LoginFormSchema.parse(req.body)
+        RegisterFormSchema.parse(req.body)
     } catch (err) {
         if (err instanceof z.ZodError) {
             logger.debug('Validation error: %o', err);
@@ -56,6 +57,10 @@ export async function postUserRegister (req:Request, res: Response) {
           JWT_SECRET,
           { expiresIn: JWT_EXPIRES_IN }
         )
+        const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: "USD" } )
+
+        if (!isMojaloopRegistered) throw new Error("Failed to register user with mojaloop")
+
         logger.info('User %s registered successfully.', new_user.email)
     
         return res.json({ success: true, message: 'Registration successful', token })
