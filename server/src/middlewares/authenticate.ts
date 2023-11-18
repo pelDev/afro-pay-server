@@ -3,11 +3,12 @@ import { type Request, type Response, type NextFunction } from 'express'
 import { AppDataSource } from '../database/dataSource'
 import { UserEntity } from '../entity/UserEntity'
 import { type IJWTUser } from '../types/jwtUser'
+import { AuthRequest } from '../types/express'
 
 export const JWT_SECRET = process.env.JWT_SECRET ?? ''
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
-export async function authenticateJWT (req: Request, res: Response, next: NextFunction) {
+export async function authenticateJWT (req: AuthRequest, res: Response, next: NextFunction) {
   const authorization = req.header('Authorization')
 
   if (authorization === undefined) {

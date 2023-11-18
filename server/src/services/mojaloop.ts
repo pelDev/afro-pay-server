@@ -3,7 +3,7 @@ import axios from "axios";
 import logger from "./logger";
 import * as MOJALOOP from "../utils/constants";
 
-interface mojaloopType {
+export interface mojaloopType {
     id: string,
     name: string,
     currency: "USD" | "TZS",
@@ -25,7 +25,7 @@ export const registerMojaloopParticipant = async ( { name, currency }: Partial<m
   
       if (response.status === 201) {
         logger.info(`Participant created successfully, ID: ${response.data.accounts[0].id}`,);
-        return true;
+        return response.data.accounts[0].id;
       }
 
       return false;

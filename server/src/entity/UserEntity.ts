@@ -17,6 +17,9 @@ export class UserEntity {
     @Column({unique: true})
     email!: string
 
+    @Column({nullable: true})
+    mojaloopId!: string
+
     @CreateDateColumn()
     created_at?: Date
 

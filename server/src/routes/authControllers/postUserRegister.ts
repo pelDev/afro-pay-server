@@ -50,6 +50,12 @@ export async function postUserRegister (req:Request, res: Response) {
         new_user.lastName = req.body.lastName
         new_user.password = password
 
+        const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: "USD" } )
+        
+        if (!isMojaloopRegistered) throw new Error("Failed to register user with mojaloop")
+
+        new_user.mojaloopId = isMojaloopRegistered;
+        
         new_user = await AppDataSource.manager.save(new_user)
     
         const token = jwt.sign(
@@ -57,13 +63,10 @@ export async function postUserRegister (req:Request, res: Response) {
           JWT_SECRET,
           { expiresIn: JWT_EXPIRES_IN }
         )
-        const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: "USD" } )
-
-        if (!isMojaloopRegistered) throw new Error("Failed to register user with mojaloop")
 
         logger.info('User %s registered successfully.', new_user.email)
     
-        return res.json({ success: true, message: 'Registration successful', token })
+        return res.json({ success: true, message: 'Registration successful', token, mojaloop_id: new_user.mojaloopId })
       } catch (error: any) {    
         logger.error('User %s registration failed: %o', req.body.email, error)
         res
