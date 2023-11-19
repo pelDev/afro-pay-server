@@ -50,7 +50,7 @@ export async function postUserLogin (req:Request, res: Response) {
         )
         logger.info('User %s logged in successfully.', user.email)
     
-        return res.json({ success: true, message: 'Login successful', token })
+        return res.json({ success: true, message: 'Login successful', token, user: {email: user.email} })
       } catch (error: any) {    
         logger.error('User %s login failed: %o', req.body.email, error)
         res
