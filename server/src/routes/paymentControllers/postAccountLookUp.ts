@@ -1,11 +1,12 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import * as Mojaloop from "../../services/mojaloop"
+import { AuthRequest } from "../../types/express";
+import logger from "../../services/logger";
 
-export async function postAccountLookUp (req: Request, res: Response) {
+export async function postAccountLookUp (req: AuthRequest, res: Response) {
     try {
-        const { mojaloop_id } = req.body
-
-        const id = mojaloop_id
+        //No request body needed
+        const id = req.user.mojaloopId
 
         const parties = await Mojaloop.getMojaloopParties( { id } )
 

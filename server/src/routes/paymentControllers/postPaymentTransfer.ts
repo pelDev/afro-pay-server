@@ -1,14 +1,17 @@
-import { type Request, type Response } from "express";
+import { type Response } from "express";
 import * as Mojaloop from "../../services/mojaloop"
 import { AuthRequest } from "../../types/express";
 
 export async function postPaymentTransfer (req: AuthRequest, res: Response) {
     try {
-        const { amountToPay, currency } = req.body
+        //Send back the amount to pay
+        const { amountToPay } = req.body
 
-        const parties = await Mojaloop.transferMojaloop( { amountToPay, currency } )
+        const currency = req.user.currency ?? "USD"
 
-        if ( parties ) {
+        const payment = await Mojaloop.transferMojaloop( { amountToPay, currency } )
+
+        if ( payment ) {
             return res.status(200).json({ message: `${String(amountToPay) +' '+ currency} payment successful.` });
         }
         

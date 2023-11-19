@@ -93,9 +93,8 @@ export const getMojaloopParties = async ({ id }: Partial<mojaloopType>) => {
     }
 };
 
-export const createMojaloopQuote = async({ id, amount, currency, note, senderFirstName, senderLastName, dateOfBirth }: mojaloopType) => {
+export const createMojaloopQuote = async({ id, amount, currency, note, senderFirstName, senderLastName, dateOfBirth }: Partial<mojaloopType>) => {
     try {
-
       logger.info(`Sending request: [POST] ${MOJALOOP.CREATEQUOTEENDPOINT}...`);
   
       const response = await axios.post(
@@ -175,7 +174,7 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
           {
             transferAmount: {
               currency: currency,
-              amount: String(amount + 0.5),
+              amount: String(amount! + 0.5),
             },
             expiration: new Date(new Date().getTime() - 3 * 60000).toISOString(),
             ilpPacket: 'AYIDwAAAAAAAACdCIGcuZ3JlZW5iYW5rZnNwLm1zaXNkbi45MDkwOTA1NTU1ggOTZXlKMGNtRnVjMkZqZEdsdmJrbGtJam9pWTJaaE1qQTJNemd0TW1aaE5pMDBaR00yTFdJeE5tUXROR0l4TURka05UUmxOREZpSWl3aWNYVnZkR1ZKWkNJNklqSXhZbVJqTVRrMUxUUTVNR0l0TkdabE1TMDRabVU1TFRreU0yUTRPVEk1TURJNU5DSXNJbkJoZVdWbElqcDdJbkJoY25SNVNXUkpibVp2SWpwN0luQmhjblI1U1dSVWVYQmxJam9pVFZOSlUwUk9JaXdpY0dGeWRIbEpaR1Z1ZEdsbWFXVnlJam9pT1RBNU1Ea3dOVFUxTlNJc0ltWnpjRWxrSWpvaVozSmxaVzVpWVc1clpuTndJaXdpWlhoMFpXNXphVzl1VEdsemRDSTZleUpsZUhSbGJuTnBiMjRpT2x0N0ltdGxlU0k2SW1GalkyOTFiblJVZVhCbElpd2lkbUZzZFdVaU9pSlhZV3hzWlhRaWZWMTlmWDBzSW5CaGVXVnlJanA3SW5CaGNuUjVTV1JKYm1adklqcDdJbkJoY25SNVNXUlVlWEJsSWpvaVRWTkpVMFJPSWl3aWNHRnlkSGxKWkdWdWRHbG1hV1Z5SWpvaU9UQTVNRGt3TlRVMU5TSXNJbVp6Y0Vsa0lqb2ljR2x1YTJKaGJtdG1jM0FpTENKbGVIUmxibk5wYjI1TWFYTjBJanA3SW1WNGRHVnVjMmx2YmlJNlczc2lhMlY1SWpvaVlXTmpiM1Z1ZEZSNWNHVWlMQ0oyWVd4MVpTSTZJbGRoYkd4bGRDSjlYWDE5TENKd1pYSnpiMjVoYkVsdVptOGlPbnNpWTI5dGNHeGxlRTVoYldVaU9uc2labWx5YzNST1lXMWxJam9pVTNWbGFTSXNJbXhoYzNST1lXMWxJam9pVW1Gd2FHRmxiQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmpkWEp5Wlc1amVTSTZJbFZUUkNJc0ltRnRiM1Z1ZENJNklqRXdNQzQxSW4wc0luUnlZVzV6WVdOMGFXOXVWSGx3WlNJNmV5SnpZMlZ1WVhKcGJ5STZJbFJTUVU1VFJrVlNJaXdpYVc1cGRHbGhkRzl5SWpvaVVFRlpSVklpTENKcGJtbDBhV0YwYjNKVWVYQmxJam9pUTA5T1UxVk5SVklpZlgwAA',

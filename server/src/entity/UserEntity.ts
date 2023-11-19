@@ -20,6 +20,9 @@ export class UserEntity {
     @Column({nullable: true})
     mojaloopId!: string
 
+    @Column({nullable: true})
+    currency!: string
+
     @CreateDateColumn()
     created_at?: Date
 
