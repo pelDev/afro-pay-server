@@ -9,15 +9,15 @@ export async function postPaymentQuote (req: AuthRequest, res: Response) {
 
         const id = req.user.mojaloopId
         const currency = req.user.currency ?? "USD"
-        const note = ""
-        const senderFirstName = req.user.firstName
-        const senderLastName = req.user.lastName
-        const dateOfBirth = "1984-01-01"
+        const note = req.body.note ?? ""
+        const senderFirstName = req.user.firstName ?? ""
+        const senderLastName = req.user.lastName ?? ""
+        const dateOfBirth = req.body.dateOfBirth ?? "2000-01-01"
 
         const quote = await Mojaloop.createMojaloopQuote( { id, amount, currency, note, senderFirstName, senderLastName, dateOfBirth } )
 
         if ( quote ) {
-            return res.status(200).json({ message: 'Payment quote created successfully.', id: req.user.mojaloopId, amountToPay: amount + 0.5, currency });
+            return res.status(200).json({ message: 'Payment quote created successfully.', id: req.user.mojaloopId, amountToPay: quote, currency });
         }
         
         return res.status(404).json({ error: 'Error creating payment quote.' });

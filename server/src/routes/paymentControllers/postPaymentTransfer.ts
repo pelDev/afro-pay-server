@@ -4,7 +4,6 @@ import { AuthRequest } from "../../types/express";
 
 export async function postPaymentTransfer (req: AuthRequest, res: Response) {
     try {
-        //Send back the amount to pay
         const { amountToPay } = req.body
 
         const currency = req.user.currency ?? "USD"

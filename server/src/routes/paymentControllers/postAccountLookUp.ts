@@ -1,11 +1,9 @@
 import { type Response } from "express";
 import * as Mojaloop from "../../services/mojaloop"
 import { AuthRequest } from "../../types/express";
-import logger from "../../services/logger";
 
 export async function postAccountLookUp (req: AuthRequest, res: Response) {
     try {
-        //No request body needed
         const id = req.user.mojaloopId
 
         const parties = await Mojaloop.getMojaloopParties( { id } )
@@ -14,7 +12,8 @@ export async function postAccountLookUp (req: AuthRequest, res: Response) {
             return res.status(200).json({ 
                 message: 'Account Lookup Successful.',
                 id, 
-                idType: "MSISDN" });
+                idType: "MSISDN"
+            });
         }
         
         return res.status(500).json({ error: 'Account Lookup failed.' });

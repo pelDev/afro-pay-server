@@ -49,8 +49,9 @@ export async function postUserRegister (req:Request, res: Response) {
         new_user.firstName = req.body.firstName
         new_user.lastName = req.body.lastName
         new_user.password = password
+        new_user.currency = "USD"
 
-        const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: "USD" } )
+        const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: <"USD" | "TZS">new_user.currency } )
         
         if (!isMojaloopRegistered) throw new Error("Failed to register user with mojaloop")
 

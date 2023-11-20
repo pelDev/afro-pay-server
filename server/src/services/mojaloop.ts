@@ -25,6 +25,7 @@ export const registerMojaloopParticipant = async ( { name, currency }: Partial<m
   
       if (response.status === 201) {
         logger.info(`Participant created successfully, ID: ${response.data.accounts[0].id}`,);
+        logger.info(response.data.accounts[0])
         return response.data.accounts[0].id;
       }
 
@@ -46,7 +47,7 @@ export const getMojaloopParties = async ({ id }: Partial<mojaloopType>) => {
             Accept: 'application/vnd.interoperability.parties+json;version=1.1',
             'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
             Date: new Date().toUTCString(),
-            'FSPIOP-Source': 'pinkbankfsp',
+            'FSPIOP-Source': MOJALOOP.PAYERFSP,
             traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
           },
         }
@@ -63,9 +64,9 @@ export const getMojaloopParties = async ({ id }: Partial<mojaloopType>) => {
           {
             party: {
               partyIdInfo: {
-                partyIdType: 'MSISDN',
+                partyIdType: MOJALOOP.IDTYPE,
                 partyIdentifier: id,
-                fspId: 'greenbankfsp',
+                fspId: MOJALOOP.PAYEEFSP,
               },
             },
           },
@@ -74,7 +75,7 @@ export const getMojaloopParties = async ({ id }: Partial<mojaloopType>) => {
               Accept: 'application/vnd.interoperability.parties+json;version=1.1',
               'Content-Type': 'application/vnd.interoperability.parties+json;version=1.1',
               Date: new Date().toUTCString(),
-              'FSPIOP-Source': 'pinkbankfsp',
+              'FSPIOP-Source': MOJALOOP.PAYERFSP,
               traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
             },
           }
@@ -96,6 +97,10 @@ export const getMojaloopParties = async ({ id }: Partial<mojaloopType>) => {
 export const createMojaloopQuote = async({ id, amount, currency, note, senderFirstName, senderLastName, dateOfBirth }: Partial<mojaloopType>) => {
     try {
       logger.info(`Sending request: [POST] ${MOJALOOP.CREATEQUOTEENDPOINT}...`);
+
+      const payeeFspFee = 0.2;
+      const payerFspFee = 0.3;
+      const amountToPay = amount! + 0.5;
   
       const response = await axios.post(
         MOJALOOP.CREATEQUOTEENDPOINT,
@@ -104,9 +109,9 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
           transactionId: 'cfa20638-2fa6-4dc6-b16d-4b107d54e41b',
           payer: {
             partyIdInfo: {
-              partyIdType: 'MSISDN',
+              partyIdType: MOJALOOP.IDTYPE,
               partyIdentifier: '9090905555',
-              fspId: 'pinkbankfsp',
+              fspId: MOJALOOP.PAYERFSP,
               extensionList: {
                 extension: [
                   {
@@ -126,9 +131,9 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
           },
           payee: {
             partyIdInfo: {
-              partyIdType: 'MSISDN',
+              partyIdType: MOJALOOP.IDTYPE,
               partyIdentifier: id,
-              fspId: 'greenbankfsp',
+              fspId: MOJALOOP.PAYEEFSP,
               extensionList: {
                 extension: [
                   {
@@ -156,8 +161,8 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
             Accept: 'application/vnd.interoperability.quotes+json;version=1.0',
             'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
             Date: new Date().toUTCString(),
-            'FSPIOP-Source': 'pinkbankfsp',
-            'FSPIOP-Destination': 'greenbankfsp',
+            'FSPIOP-Source': MOJALOOP.PAYERFSP,
+            'FSPIOP-Destination': MOJALOOP.PAYEEFSP,
             traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
           },
         }
@@ -174,14 +179,14 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
           {
             transferAmount: {
               currency: currency,
-              amount: String(amount! + 0.5),
+              amount: String(amountToPay),
             },
             expiration: new Date(new Date().getTime() - 3 * 60000).toISOString(),
-            ilpPacket: 'AYIDwAAAAAAAACdCIGcuZ3JlZW5iYW5rZnNwLm1zaXNkbi45MDkwOTA1NTU1ggOTZXlKMGNtRnVjMkZqZEdsdmJrbGtJam9pWTJaaE1qQTJNemd0TW1aaE5pMDBaR00yTFdJeE5tUXROR0l4TURka05UUmxOREZpSWl3aWNYVnZkR1ZKWkNJNklqSXhZbVJqTVRrMUxUUTVNR0l0TkdabE1TMDRabVU1TFRreU0yUTRPVEk1TURJNU5DSXNJbkJoZVdWbElqcDdJbkJoY25SNVNXUkpibVp2SWpwN0luQmhjblI1U1dSVWVYQmxJam9pVFZOSlUwUk9JaXdpY0dGeWRIbEpaR1Z1ZEdsbWFXVnlJam9pT1RBNU1Ea3dOVFUxTlNJc0ltWnpjRWxrSWpvaVozSmxaVzVpWVc1clpuTndJaXdpWlhoMFpXNXphVzl1VEdsemRDSTZleUpsZUhSbGJuTnBiMjRpT2x0N0ltdGxlU0k2SW1GalkyOTFiblJVZVhCbElpd2lkbUZzZFdVaU9pSlhZV3hzWlhRaWZWMTlmWDBzSW5CaGVXVnlJanA3SW5CaGNuUjVTV1JKYm1adklqcDdJbkJoY25SNVNXUlVlWEJsSWpvaVRWTkpVMFJPSWl3aWNHRnlkSGxKWkdWdWRHbG1hV1Z5SWpvaU9UQTVNRGt3TlRVMU5TSXNJbVp6Y0Vsa0lqb2ljR2x1YTJKaGJtdG1jM0FpTENKbGVIUmxibk5wYjI1TWFYTjBJanA3SW1WNGRHVnVjMmx2YmlJNlczc2lhMlY1SWpvaVlXTmpiM1Z1ZEZSNWNHVWlMQ0oyWVd4MVpTSTZJbGRoYkd4bGRDSjlYWDE5TENKd1pYSnpiMjVoYkVsdVptOGlPbnNpWTI5dGNHeGxlRTVoYldVaU9uc2labWx5YzNST1lXMWxJam9pVTNWbGFTSXNJbXhoYzNST1lXMWxJam9pVW1Gd2FHRmxiQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmpkWEp5Wlc1amVTSTZJbFZUUkNJc0ltRnRiM1Z1ZENJNklqRXdNQzQxSW4wc0luUnlZVzV6WVdOMGFXOXVWSGx3WlNJNmV5SnpZMlZ1WVhKcGJ5STZJbFJTUVU1VFJrVlNJaXdpYVc1cGRHbGhkRzl5SWpvaVVFRlpSVklpTENKcGJtbDBhV0YwYjNKVWVYQmxJam9pUTA5T1UxVk5SVklpZlgwAA',
-            condition: 'OrYQwM_ZhNCxa-tGfs2XuIUcyHIdkV3d560paRwk8G8',
+            ilpPacket: MOJALOOP.ILPPACKET,
+            condition: MOJALOOP.TRANSFERCONDITION,
             payeeFspFee: {
               currency: currency,
-              amount: '0.2',
+              amount: String(payeeFspFee),
             },
             geoCode: {
               latitude: '7.16322',
@@ -189,7 +194,7 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
             },
             payeeFspCommission: {
               currency: currency,
-              amount: '0.3',
+              amount: String(payerFspFee),
             },
             payeeReceiveAmount: {
               currency: currency,
@@ -201,8 +206,8 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
               Accept: 'application/vnd.interoperability.quotes+json;version=1.0',
               'Content-Type': 'application/vnd.interoperability.quotes+json;version=1.0',
               Date: new Date().toUTCString(),
-              'FSPIOP-Source': 'pinkbankfsp',
-              'FSPIOP-Destination': 'greenbankfsp',
+              'FSPIOP-Source': MOJALOOP.PAYERFSP,
+              'FSPIOP-Destination': MOJALOOP.PAYEEFSP,
               traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
             },
           }
@@ -210,7 +215,7 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
         
         if (confirmationResponse.status === 200) {
             logger.info('Payment quote created successfully');
-            return true
+            return amountToPay
         }
       } else {
             return false
@@ -229,23 +234,22 @@ export const transferMojaloop = async ({ amountToPay, currency }: Partial<mojalo
         MOJALOOP.CREATETRANSFERENDPOINT,
         {
           transferId: 'cfa20638-2fa6-4dc6-b16d-4b107d54e41b',
-          payerFsp: 'pinkbankfsp',
-          payeeFsp: 'greenbankfsp',
+          payerFsp: MOJALOOP.PAYERFSP,
+          payeeFsp: MOJALOOP.PAYEEFSP,
           amount: {
             amount: String(amountToPay),
             currency: currency,
           },
           expiration: new Date(new Date().getTime() - 3 * 60000).toISOString(),
-          ilpPacket:
-            'AYIDwAAAAAAAACdCIGcuZ3JlZW5iYW5rZnNwLm1zaXNkbi45MDkwOTA1NTU1ggOTZXlKMGNtRnVjMkZqZEdsdmJrbGtJam9pWTJaaE1qQTJNemd0TW1aaE5pMDBaR00yTFdJeE5tUXROR0l4TURka05UUmxOREZpSWl3aWNYVnZkR1ZKWkNJNklqSXhZbVJqTVRrMUxUUTVNR0l0TkdabE1TMDRabVU1TFRreU0yUTRPVEk1TURJNU5DSXNJbkJoZVdWbElqcDdJbkJoY25SNVNXUkpibVp2SWpwN0luQmhjblI1U1dSVWVYQmxJam9pVFZOSlUwUk9JaXdpY0dGeWRIbEpaR1Z1ZEdsbWFXVnlJam9pT1RBNU1Ea3dOVFUxTlNJc0ltWnpjRWxrSWpvaVozSmxaVzVpWVc1clpuTndJaXdpWlhoMFpXNXphVzl1VEdsemRDSTZleUpsZUhSbGJuTnBiMjRpT2x0N0ltdGxlU0k2SW1GalkyOTFiblJVZVhCbElpd2lkbUZzZFdVaU9pSlhZV3hzWlhRaWZWMTlmWDBzSW5CaGVXVnlJanA3SW5CaGNuUjVTV1JKYm1adklqcDdJbkJoY25SNVNXUlVlWEJsSWpvaVRWTkpVMFJPSWl3aWNHRnlkSGxKWkdWdWRHbG1hV1Z5SWpvaU9UQTVNRGt3TlRVMU5TSXNJbVp6Y0Vsa0lqb2ljR2x1YTJKaGJtdG1jM0FpTENKbGVIUmxibk5wYjI1TWFYTjBJanA3SW1WNGRHVnVjMmx2YmlJNlczc2lhMlY1SWpvaVlXTmpiM1Z1ZEZSNWNHVWlMQ0oyWVd4MVpTSTZJbGRoYkd4bGRDSjlYWDE5TENKd1pYSnpiMjVoYkVsdVptOGlPbnNpWTI5dGNHeGxlRTVoYldVaU9uc2labWx5YzNST1lXMWxJam9pVTNWbGFTSXNJbXhoYzNST1lXMWxJam9pVW1Gd2FHRmxiQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmpkWEp5Wlc1amVTSTZJbFZUUkNJc0ltRnRiM1Z1ZENJNklqRXdNQzQxSW4wc0luUnlZVzV6WVdOMGFXOXVWSGx3WlNJNmV5SnpZMlZ1WVhKcGJ5STZJbFJTUVU1VFJrVlNJaXdpYVc1cGRHbGhkRzl5SWpvaVVFRlpSVklpTENKcGJtbDBhV0YwYjNKVWVYQmxJam9pUTA5T1UxVk5SVklpZlgwAA',
-          condition: 'OrYQwM_ZhNCxa-tGfs2XuIUcyHIdkV3d560paRwk8G8',
+          ilpPacket: MOJALOOP.ILPPACKET,
+          condition: MOJALOOP.TRANSFERCONDITION,
         },
         {
           headers: {
             Accept: 'application/vnd.interoperability.transfers+json;version=1.0',
             'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.1',
             Date: new Date().toUTCString(),
-            'FSPIOP-Source': 'pinkbankfsp',
+            'FSPIOP-Source': MOJALOOP.PAYERFSP,
             traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
           },
         }
@@ -269,15 +273,15 @@ export const transferMojaloop = async ({ amountToPay, currency }: Partial<mojalo
               Accept: 'application/vnd.interoperability.transfers+json;version=1.0',
               'Content-Type': 'application/vnd.interoperability.transfers+json;version=1.0',
               Date: new Date().toUTCString(),
-              'FSPIOP-Source': 'pinkbankfsp',
-              'FSPIOP-Destination': 'greenbankfsp',
+              'FSPIOP-Source': MOJALOOP.PAYERFSP,
+              'FSPIOP-Destination': MOJALOOP.PAYEEFSP,
               traceparent: '00-aabb40ecaa9eef97cdc2fe5588a4f12f-0123456789abcdef0-00',
             },
           }
         );
   
         if (confirmationResponse.status === 200) {
-            logger.info(`Payment successful: [${String(amountToPay) +' '+ currency}] sent to Merchant DFSP [greenbankdfsp].`);
+            logger.info(`Payment successful: [${String(amountToPay) +' '+ currency}] sent to Merchant DFSP. `);
             return true
         }
       } else {
