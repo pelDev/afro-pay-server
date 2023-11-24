@@ -12,8 +12,8 @@ export async function postPaymentTransfer (req: AuthRequest, res: Response) {
         const payment = await Mojaloop.transferMojaloop( { amountToPay, currency } )
 
         if ( payment ) {
-            sendUpdates( amountToPay - 0.5 );
-            return res.status(200).json({ message: `${String(amountToPay) +' '+ currency} payment successful.` });
+            const hasSentClientUpdate = sendUpdates( amountToPay - 0.5 );
+            return res.status(200).json({ message: `${String(amountToPay) +' '+ currency} payment successful.`, hasSentClientUpdate });
         }
 
         return res.status(404).json({ error: 'Payment failed.' });

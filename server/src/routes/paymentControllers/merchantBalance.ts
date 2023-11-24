@@ -15,7 +15,11 @@ export const socketConnection: WebsocketRequestHandler = (ws: WebSocket, req: Re
 export function sendUpdates(updatedBalance: number) {
     const wss = getWss();
 
-    const client = Array.from(wss.clients)[0]
+    const client = Array.from(wss.clients)[0] ?? null;
     
+    if (!client) return false;
+
     client.send(JSON.stringify({ updatedBalance }));
+
+    return true;
 }
