@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const WebSocketComponent = () => {
+    const socketUrl = import.meta.env.VITE_SOCKET_URL;
     const [serverData, setServerData] = useState(0);
 
     const mainStyle = {
@@ -13,7 +14,7 @@ const WebSocketComponent = () => {
     }
 
     useEffect(() => {
-        const socket = new WebSocket('ws://localhost:5000/bal');
+        const socket = new WebSocket( socketUrl ?? 'ws://localhost:5000/bal' );
 
         // Connection opened
         socket.addEventListener('open', (event) => {

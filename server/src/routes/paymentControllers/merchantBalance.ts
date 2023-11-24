@@ -5,7 +5,7 @@ import { WebsocketRequestHandler } from "express-ws";
 import logger from "../../services/logger";
 
 export const socketConnection: WebsocketRequestHandler = (ws: WebSocket, req: Request) => {
-    logger.info('Web app connected');
+    logger.info('Client connected');
   
     let merchantBalance = 0;
 
