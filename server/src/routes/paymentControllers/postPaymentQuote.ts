@@ -9,7 +9,7 @@ export async function postPaymentQuote (req: AuthRequest, res: Response) {
 
         const id = req.user.mojaloopId
         const currency = req.user.currency ?? "USD"
-        const note = req.body.note ?? ""
+        const note = req.body.note ?? "test"
         const senderFirstName = req.user.firstName ?? ""
         const senderLastName = req.user.lastName ?? ""
         const dateOfBirth = req.body.dateOfBirth ?? "2000-01-01"

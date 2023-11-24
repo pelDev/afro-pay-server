@@ -100,7 +100,7 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
 
       const payeeFspFee = 0.2;
       const payerFspFee = 0.3;
-      const amountToPay = amount! + 0.5;
+      const amountToPay = Number(amount!) + 0.5;
   
       const response = await axios.post(
         MOJALOOP.CREATEQUOTEENDPOINT,
@@ -179,7 +179,7 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
           {
             transferAmount: {
               currency: currency,
-              amount: String(amountToPay),
+              amount: amountToPay.toString(),
             },
             expiration: new Date(new Date().getTime() - 3 * 60000).toISOString(),
             ilpPacket: MOJALOOP.ILPPACKET,
@@ -215,13 +215,13 @@ export const createMojaloopQuote = async({ id, amount, currency, note, senderFir
         
         if (confirmationResponse.status === 200) {
             logger.info('Payment quote created successfully');
-            return amountToPay
+            return +amountToPay
         }
       } else {
-            return false
+        return false
       }
-    } catch (error) {
-      logger.error(`Error during quote initiation: ${(error as any).response.data}`,);
+    } catch (error: any) {
+      logger.error(`Error during quote initiation: ${JSON.stringify(error.response.data)}`,);
       return false
     }
 };
