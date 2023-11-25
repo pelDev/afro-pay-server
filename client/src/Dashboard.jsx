@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const WebSocketComponent = () => {
+const Dashboard = () => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
     const [serverData, setServerData] = useState(0);
 
@@ -10,7 +10,8 @@ const WebSocketComponent = () => {
         height: "100vh",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "column"
+        flexDirection: "column",
+        gap: "20px"
     }
 
     useEffect(() => {
@@ -40,10 +41,10 @@ const WebSocketComponent = () => {
 
     return (
         <div style={mainStyle}>
-            <h1>Merchant's Balance</h1>
-            <h2>USD { serverData }</h2>
+            <h1 className='text-2xl'>Merchant's Balance</h1>
+            <h2 className='text-3xl'>USD { serverData }</h2>
         </div>
     );
 };
 
-export default WebSocketComponent;
+export default Dashboard;

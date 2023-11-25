@@ -50,6 +50,7 @@ export async function postUserRegister (req:Request, res: Response) {
         new_user.lastName = req.body.lastName
         new_user.password = password
         new_user.currency = "USD"
+        console.log(new_user)
 
         const isMojaloopRegistered = await Mojaloop.registerMojaloopParticipant( { name: new_user.firstName, currency: <"USD" | "TZS">new_user.currency } )
         

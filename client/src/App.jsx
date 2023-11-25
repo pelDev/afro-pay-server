@@ -1,14 +1,22 @@
-import { useState } from 'react'
 import './App.css'
-import WebSocketComponent from './WebSocket'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from './Dashboard'
+import Register from './Register'
+import Login from './Login';
+import Success from './Success';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <WebSocketComponent />
-    </>
+    <BrowserRouter>
+    <Routes>
+        <Route path="/success" element={<Success />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="*" element={<Register />} />
+    </Routes>
+  </BrowserRouter>
   )
 }
 
