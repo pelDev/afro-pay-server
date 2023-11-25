@@ -10,7 +10,9 @@
         "server": "npm run dev --prefix server",
         "client": "npm run dev --prefix client",
         "watch": "npm run server & npm run client",
-        "deploy": "npm run build --prefix client && npm run build --prefix server && npm start --prefix server"
+        "deploy": "npm run build --prefix client && npm start --prefix server",
+        "abort": "npm run abort --prefix server",
+        "status": "npm run status --prefix server"
     },
     "keywords": [],
     "author": "crazy_dev",
