@@ -83,17 +83,23 @@ export default function Register() {
                     required
                 />
                 </div>
-                {/* <div className="form-item">
+                <div className="form-item">
                     <label>
-                        Upload an id document <span className="text-red-700 text-xl">*</span>
+                        Verify your Identity <span className="text-red-700 text-xl">*</span>
                     </label>
-                    <Field
-                        type="file"
-                        id="id"
-                        name="id"
-                        className="border-2 border-gray-300 rounded-md p-2"
-                    />
-                </div> */}
+                    <p className="text-gray-500 text-sm mx-3">To verify your identity, please share an identity document in your digiLocker account with the afropay organization <span className="font-bold text-sm">arjentsicko@gmail.com</span>.</p>
+                    <p className="text-gray-500 text-sm mx-3">Note, transactions would be activated once identity has been successfully verified.</p>
+                    <div className="flex flex-row gap-2 items-center">
+                        <Field
+                            type="checkbox"
+                            id="id"
+                            name="id"
+                            className="border-2 border-gray-300 rounded-md p-2 cursor-pointer"
+                            required
+                        />
+                        <p className="text-sm">I have shared my id <span className="text-red-700 text-xl">*</span></p>
+                    </div>
+                </div>
                 <button
                 type="submit"
                 className="bg-blue-500 text-white rounded-md p-2 w-8/12 mx-auto my-4"
