@@ -13,7 +13,8 @@
         "deploy": "npm run build --prefix client && npm start --prefix server",
         "abort": "npm run abort --prefix server",
         "status": "npm run status --prefix server",
-        "save-pm2": "npm run save-pm2 --prefix server"
+        "save-pm2": "npm run save-pm2 --prefix server",
+        "logs": "npm run logs --prefix server"
     },
     "keywords": [],
     "author": "crazy_dev",
