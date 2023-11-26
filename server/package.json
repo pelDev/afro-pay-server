@@ -6,12 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "npm run build && pm2 start dist/index.js -i max",
+    "start": "npm run build && pm2 start dist/index.js -i 0 --name afro-pay-server",
     "dev": "nodemon src/index.ts",
-    "abort": "pm2 stop index",
+    "abort": "pm2 stop all",
     "status": "pm2 status",
     "save-pm2": "pm2 save",
-    "logs": "pm2 logs index --lines 300"
+    "logs": "pm2 logs --lines 300",
+    "moint": "pm2 monit"
   },
   "keywords": [],
   "author": "",
