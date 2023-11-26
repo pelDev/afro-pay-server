@@ -13,7 +13,7 @@ export default function setupRoutes (app: Application): void {
     app.use("/api/v1/mojaloop", authenticateJWT, payment_route);
 
     // Catch-all route to handle 404s
-    app.use('*', (_, res) => {
-        return res.status(404).json({ message: 'Route not found' });
+    app.get("/*", (_, res) => {
+        res.sendFile(path.join(__dirname, "../..", "public", "index.html"));
     });
 }
