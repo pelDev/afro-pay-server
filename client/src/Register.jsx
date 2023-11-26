@@ -2,6 +2,8 @@ import { Formik, Form, Field } from "formik";
 import Afropay from"./assets/afropay.jpeg"
 import { RegisterFn } from "./utils";
 import {useNavigate} from 'react-router-dom';
+import { toast } from "react-toastify";
+import { Spinner } from "@chakra-ui/react" 
 
 export default function Register() {
     const navigate = useNavigate();
@@ -16,16 +18,23 @@ export default function Register() {
             lastName: "",
             email: "",
             password: "",
-            // id:""
             }}
             onSubmit={async (values, { resetForm }) => {
                 const response = await RegisterFn(values)
                 console.log(response)
                 resetForm()
-                navigate('/success')
+                if (response && response.status === 200){
+                    toast.success("Registration Successful")
+                    setTimeout(()=>{
+                        navigate('/success')
+                    }, 1500)
+                }
+                else{
+                    toast.error("Registration Failed")
+                }
             }}  
         >
-            {() => (
+            {( {isSubmitting} ) => (
             <Form className="w-10/12 h-fit m-auto bg-white text-black p-10 rounded-md flex flex-col justify-center gap-5 border-2 border-gray-300">
                 <h1 className="text-center text-black text-3xl">Register</h1>
                 <div className="form-item">
@@ -102,9 +111,10 @@ export default function Register() {
                 </div>
                 <button
                 type="submit"
-                className="bg-blue-500 text-white rounded-md p-2 w-8/12 mx-auto my-4"
+                className="bg-blue-500 text-white rounded-md p-2 w-8/12 mx-auto my-4 flex flex-row justify-center items-center gap-1 hover:bg-blue-400"
                 >
-                Register
+                <span>Register</span>
+                { isSubmitting && <Spinner size={"sm"} /> }
                 </button>
             </Form>
             )}

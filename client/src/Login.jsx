@@ -2,6 +2,8 @@ import { Formik, Form, Field } from "formik";
 import Afropay from"./assets/afropay.jpeg"
 import { LoginFn } from "./utils";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Spinner } from "@chakra-ui/react" 
 
 export default function Login() {
     const navigate = useNavigate();
@@ -19,10 +21,19 @@ export default function Login() {
                 const response = await LoginFn(values)
                 console.log(response)
                 resetForm()
-                navigate('/dashboard')
+                if (response && response.status === 200){
+                    toast.success("Login Successful")
+                    setTimeout(()=>{
+                        navigate('/dashboard')
+                    }, 1500)
+                }
+                else{
+                    toast.error("Login Failed")
+                    console.log('Not ok')
+                }
             }}  
         >
-            {() => (
+            {({ isSubmitting }) => (
             <Form className="w-10/12 h-fit m-auto bg-white text-black p-10 rounded-md flex flex-col justify-center gap-5 border-2 border-gray-300">
                 <h1 className="text-center text-black text-3xl">Login</h1>
                 <div className="form-item">
@@ -54,10 +65,11 @@ export default function Login() {
                 </div>
 
                 <button
-                    type="submit"
-                    className="bg-blue-500 text-white rounded-md p-2 w-8/12 mx-auto my-4"
-                    >
-                    Login
+                type="submit"
+                className="bg-blue-500 text-white rounded-md p-2 w-8/12 mx-auto my-4 flex flex-row justify-center items-center gap-1 hover:bg-blue-400"
+                >
+                <span>Login</span>
+                { isSubmitting && <Spinner size={"sm"} /> }
                 </button>
             </Form>
             )}
