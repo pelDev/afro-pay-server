@@ -11,7 +11,7 @@
     "abort": "pm2 stop index",
     "status": "pm2 status",
     "save-pm2": "pm2 save",
-    "logs": "pm2 logs --lines 300"
+    "logs": "pm2 logs index --lines 300"
   },
   "keywords": [],
   "author": "",
