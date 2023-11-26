@@ -11,6 +11,7 @@ import { tryInitializeDatabase } from './setup/setupServiceInitializers';
 import { readEnv } from './setup/readEnv';
 import dotenv from 'dotenv'
 import { socketConnection } from './routes/paymentControllers/merchantBalance';
+import logger from './services/logger';
 
 if (process.env.NODE_ENV === 'test') {
     dotenv.config({ path: path.resolve(process.cwd(), '.env.test'), override: true })
@@ -30,4 +31,6 @@ app.ws('/bal', socketConnection)
 setupMiddlewares(app);
 setupRoutes(app);
 
+logger.info("Try to start server");
+logger.info(`${PORT}, ${HOSTNAME}`);
 setupServer(app, HOSTNAME, PORT, tryInitializeDatabase);
